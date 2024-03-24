@@ -43,7 +43,7 @@ def job_sequencing(df):
 
 # Streamlit app
 def main():
-    st.title("Job Sequencing with Streamlit")
+    st.title("Job Sequencing Problem Solver")
     
     # Display sample data
     st.subheader("Sample Data")
