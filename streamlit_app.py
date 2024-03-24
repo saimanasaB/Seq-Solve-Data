@@ -57,19 +57,20 @@ def main():
     st.write(sequence)
     st.subheader("Total Profit")
     st.write(total_profit)
-    
-    # Visualization: Bar plot of deadlines with profits
-    chart_data = df[['deadline', 'profit']]
-    chart = alt.Chart(chart_data).mark_bar().encode(
-        x='deadline:O',
-        y='profit:Q',
-        tooltip=['deadline', 'profit']
+
+    # Visualize job deadlines and profits
+    df_sequence = df[df['jobID'].isin(sequence)]
+    chart = alt.Chart(df_sequence).mark_bar().encode(
+        x='jobID',
+        y='profit',
+        color=alt.Color('deadline', scale=alt.Scale(scheme='inferno'))
     ).properties(
-        title='Deadlines with Profits'
-    ).interactive()
-    
-    st.subheader("Visualization: Deadlines with Profits")
-    st.write(chart)
+        width=600,
+        height=400,
+        title='Job Deadlines and Profits'
+    )
+    st.subheader("Job Deadlines and Profits Visualization")
+    st.altair_chart(chart)
 
 if __name__ == "__main__":
     main()
