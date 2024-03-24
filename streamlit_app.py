@@ -53,18 +53,24 @@ def main():
     st.subheader("Total Profit")
     st.write(total_profit)
 
-    # Visualize selected jobs with deadlines and profits
+    # Visualization of selected jobs
     selected_jobs = df[df['jobID'].isin(sequence)]
-    selected_jobs_chart = alt.Chart(selected_jobs).mark_circle(size=100).encode(
-        x='deadline',
-        y='profit',
-        color='jobID:N',
-        tooltip=['jobID', 'deadline', 'profit']
-    ).properties(
-        title='Selected Jobs with Deadlines and Profits'
-    ).interactive()
 
-    st.altair_chart(selected_jobs_chart, use_container_width=True)
+    if not selected_jobs.empty:
+        st.subheader("Visualization of Selected Jobs")
+        chart = alt.Chart(selected_jobs).mark_bar().encode(
+            x='jobID',
+            y='profit',
+            color='deadline',
+            tooltip=['jobID', 'profit', 'deadline']
+        ).properties(
+            width=600,
+            height=400
+        ).interactive()
+
+        st.altair_chart(chart, use_container_width=True)
+    else:
+        st.write("No jobs were selected.")
 
 if __name__ == "__main__":
     main()
