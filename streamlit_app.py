@@ -47,29 +47,26 @@ def main():
     # Perform job sequencing
     sequence, total_profit = job_sequencing(df)
 
-    # Create a DataFrame for selected jobs
-    selected_jobs_df = df[df['jobID'].isin(sequence)]
-
-    # Visualization using Altair
-    if not selected_jobs_df.empty:
-        st.subheader("Selected Jobs Visualization")
-        chart = alt.Chart(selected_jobs_df).mark_bar().encode(
-            x='jobID',
-            y='profit',
-            color='deadline:N',
-            tooltip=['jobID', 'deadline', 'profit']
-        ).properties(
-            width=600,
-            height=400,
-            title='Selected Jobs with Deadlines and Profits'
-        )
-        st.altair_chart(chart, use_container_width=True)
-
     # Display results
     st.subheader("Job Sequence")
     st.write(sequence)
     st.subheader("Total Profit")
     st.write(total_profit)
+    
+    # Visualization using Altair
+    chart_data = df[['jobID', 'deadline', 'profit']]
+    chart = alt.Chart(chart_data).mark_bar().encode(
+        x='jobID',
+        y='profit',
+        color='deadline:N',
+        tooltip=['jobID', 'deadline', 'profit']
+    ).properties(
+        width=600,
+        height=400
+    ).interactive()
+
+    st.subheader("Job Profit Visualization")
+    st.altair_chart(chart, use_container_width=True)
 
 if __name__ == "__main__":
     main()
