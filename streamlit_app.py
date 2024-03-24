@@ -31,8 +31,13 @@ def job_sequencing(df):
                 total_profit += df['profit'].iloc[i]
                 break
         else:
-            continue  # No available time slot found
-        # If no available time slot is found before the deadline, skip the job
+            # If no available time slot is found before the deadline, append job anyway
+            for j in range(max_deadline - 1, -1, -1):
+                if not time_slots[j]:
+                    time_slots[j] = True
+                    sequence.append(df['jobID'].iloc[i])
+                    total_profit += df['profit'].iloc[i]
+                    break
 
     return sequence, total_profit
 
@@ -67,6 +72,22 @@ def main():
 
     st.subheader("Job Profit Visualization")
     st.altair_chart(chart, use_container_width=True)
+
+    # Visualization for selected job sequences
+    selected_jobs = df[df['jobID'].isin(sequence)]
+    selected_chart = alt.Chart(selected_jobs).mark_bar().encode(
+        x='jobID',
+        y='profit',
+        color='deadline:N',
+        tooltip=['jobID', 'deadline', 'profit']
+    ).properties(
+        title="Selected Job Sequences",
+        width=600,
+        height=400
+    ).interactive()
+
+    st.subheader("Selected Job Sequences Visualization")
+    st.altair_chart(selected_chart, use_container_width=True)
 
 if __name__ == "__main__":
     main()
