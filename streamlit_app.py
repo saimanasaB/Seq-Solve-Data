@@ -57,32 +57,19 @@ def main():
     st.write(sequence)
     st.subheader("Total Profit")
     st.write(total_profit)
-
-    # Visualization - Bar Plot for deadlines associated with Job IDs
-    st.subheader("Deadlines associated with Job IDs")
-    chart_deadlines = alt.Chart(df).mark_bar().encode(
-        x='jobID',
-        y='deadline',
-        tooltip=['jobID', 'deadline']
-    ).properties(
-        width=600,
-        height=400,
-        title='Deadlines associated with Job IDs'
-    ).interactive()
-    st.altair_chart(chart_deadlines)
-
-    # Visualization - Bar Plot for profits associated with Job IDs
-    st.subheader("Profits associated with Job IDs")
-    chart_profits = alt.Chart(df).mark_bar().encode(
-        x='jobID',
-        y='profit',
-        tooltip=['jobID', 'profit']
-    ).properties(
-        width=600,
-        height=400,
-        title='Profits associated with Job IDs'
-    ).interactive()
-    st.altair_chart(chart_profits)
     
+    # Visualization: Bar plot of deadlines with profits
+    chart_data = df[['deadline', 'profit']]
+    chart = alt.Chart(chart_data).mark_bar().encode(
+        x='deadline:O',
+        y='profit:Q',
+        tooltip=['deadline', 'profit']
+    ).properties(
+        title='Deadlines with Profits'
+    ).interactive()
+    
+    st.subheader("Visualization: Deadlines with Profits")
+    st.write(chart)
+
 if __name__ == "__main__":
     main()
