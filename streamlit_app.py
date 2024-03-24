@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import altair as alt
 
 # Sample data
 data = pd.read_csv('jobs.csv')
@@ -15,7 +15,6 @@ def job_sequencing(df):
     # Initialize empty sequence and profits
     sequence = []
     total_profit = 0
-    selected_jobs = []
 
     # Initialize time slots
     max_deadline = max(df['deadline'])
@@ -30,17 +29,12 @@ def job_sequencing(df):
                 time_slots[j] = True
                 sequence.append(df['jobID'].iloc[i])
                 total_profit += df['profit'].iloc[i]
-                selected_jobs.append({
-                    'jobID': df['jobID'].iloc[i],
-                    'deadline': df['deadline'].iloc[i],
-                    'profit': df['profit'].iloc[i]
-                })
                 break
         else:
             continue  # No available time slot found
         # If no available time slot is found before the deadline, skip the job
 
-    return sequence, total_profit, selected_jobs
+    return sequence, total_profit
 
 # Streamlit app
 def main():
@@ -51,7 +45,7 @@ def main():
     st.write(df)
 
     # Perform job sequencing
-    sequence, total_profit, selected_jobs = job_sequencing(df)
+    sequence, total_profit = job_sequencing(df)
 
     # Display results
     st.subheader("Job Sequence")
@@ -59,14 +53,18 @@ def main():
     st.subheader("Total Profit")
     st.write(total_profit)
 
-    # Visualization of selected jobs
-    if selected_jobs:
-        st.subheader("Visualization of Selected Jobs")
-        df_selected_jobs = pd.DataFrame(selected_jobs)
-        fig = px.scatter(df_selected_jobs, x='deadline', y='profit', text='jobID', title='Selected Jobs')
-        fig.update_traces(marker=dict(color='green', size=12))
-        fig.update_layout(xaxis_title='Deadline', yaxis_title='Profit')
-        st.plotly_chart(fig)
+    # Visualize selected jobs with deadlines and profits
+    selected_jobs = df[df['jobID'].isin(sequence)]
+    selected_jobs_chart = alt.Chart(selected_jobs).mark_circle(size=100).encode(
+        x='deadline',
+        y='profit',
+        color='jobID:N',
+        tooltip=['jobID', 'deadline', 'profit']
+    ).properties(
+        title='Selected Jobs with Deadlines and Profits'
+    ).interactive()
+
+    st.altair_chart(selected_jobs_chart, use_container_width=True)
 
 if __name__ == "__main__":
     main()
