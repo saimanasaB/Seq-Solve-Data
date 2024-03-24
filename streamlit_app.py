@@ -1,9 +1,9 @@
+
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go
 
 # Sample data
-data =pd.read_csv('jobs.csv')
+data = pd.read_csv('jobs.csv')
 
 # Create DataFrame
 df = pd.DataFrame(data)
@@ -52,27 +52,6 @@ def main():
     st.write(sequence)
     st.subheader("Total Profit")
     st.write(total_profit)
-
-    # Visualization of selected job sequence
-    st.subheader("Job Sequence Visualization")
-
-    # Create a Plotly figure
-    fig = go.Figure()
-
-    # Add bars for each job in the sequence
-    for i, jobID in enumerate(sequence):
-        job = df[df['jobID'] == jobID].iloc[0]
-        fig.add_trace(go.Bar(x=[job['deadline']], y=[job['profit']],
-                             name=f"Job {job['jobID']}"))
-
-    # Update layout
-    fig.update_layout(title="Job Sequence Visualization",
-                      xaxis_title="Deadline",
-                      yaxis_title="Profit",
-                      showlegend=True)
-
-    # Render the Plotly figure
-    st.plotly_chart(fig)
 
 if __name__ == "__main__":
     main()
