@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 # Sample data
 data = pd.read_csv('jobs.csv')
@@ -14,14 +15,11 @@ def job_sequencing(df):
     # Initialize empty sequence and profits
     sequence = []
     total_profit = 0
+    selected_jobs = []
 
     # Initialize time slots
     max_deadline = max(df['deadline'])
     time_slots = [False] * max_deadline
-
-    # Initialize lists to store deadlines and profits of selected jobs
-    selected_deadlines = []
-    selected_profits = []
 
     # Iterate through jobs
     for i in range(len(df)):
@@ -32,14 +30,17 @@ def job_sequencing(df):
                 time_slots[j] = True
                 sequence.append(df['jobID'].iloc[i])
                 total_profit += df['profit'].iloc[i]
-                selected_deadlines.append(df['deadline'].iloc[i])
-                selected_profits.append(df['profit'].iloc[i])
+                selected_jobs.append({
+                    'jobID': df['jobID'].iloc[i],
+                    'deadline': df['deadline'].iloc[i],
+                    'profit': df['profit'].iloc[i]
+                })
                 break
         else:
             continue  # No available time slot found
         # If no available time slot is found before the deadline, skip the job
 
-    return sequence, total_profit, selected_deadlines, selected_profits
+    return sequence, total_profit, selected_jobs
 
 # Streamlit app
 def main():
@@ -50,7 +51,7 @@ def main():
     st.write(df)
 
     # Perform job sequencing
-    sequence, total_profit, selected_deadlines, selected_profits = job_sequencing(df)
+    sequence, total_profit, selected_jobs = job_sequencing(df)
 
     # Display results
     st.subheader("Job Sequence")
@@ -59,11 +60,13 @@ def main():
     st.write(total_profit)
 
     # Visualization of selected jobs
-    st.subheader("Visualization of Selected Jobs")
-    selected_jobs_df = pd.DataFrame({'Job ID': sequence, 'Profit': selected_profits, 'Deadline': selected_deadlines})
-    st.bar_chart(selected_jobs_df.set_index('Job ID')['Profit'])
-    st.line_chart(selected_jobs_df.set_index('Job ID')['Deadline'])
+    if selected_jobs:
+        st.subheader("Visualization of Selected Jobs")
+        df_selected_jobs = pd.DataFrame(selected_jobs)
+        fig = px.scatter(df_selected_jobs, x='deadline', y='profit', text='jobID', title='Selected Jobs')
+        fig.update_traces(marker=dict(color='green', size=12))
+        fig.update_layout(xaxis_title='Deadline', yaxis_title='Profit')
+        st.plotly_chart(fig)
 
 if __name__ == "__main__":
     main()
-
