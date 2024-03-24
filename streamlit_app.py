@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-
+import altair as alt
 
 # Sample data
 data = pd.read_csv('jobs.csv')
@@ -58,5 +58,14 @@ def main():
     st.subheader("Total Profit")
     st.write(total_profit)
     
+    # Visualization
+    st.subheader("Visualization")
+    chart_data = df[['deadline', 'profit']]
+    st.write(alt.Chart(chart_data).mark_bar().encode(
+        x='deadline',
+        y='profit',
+        tooltip=['deadline', 'profit']
+    ).interactive())
+
 if __name__ == "__main__":
     main()
