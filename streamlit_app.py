@@ -58,36 +58,5 @@ def main():
     st.subheader("Total Profit")
     st.write(total_profit)
     
-    # Visualization using Altair
-    chart_data = df[['jobID', 'deadline', 'profit']]
-    chart = alt.Chart(chart_data).mark_bar().encode(
-        x='jobID',
-        y='profit',
-        color='deadline:N',
-        tooltip=['jobID', 'deadline', 'profit']
-    ).properties(
-        width=600,
-        height=400
-    ).interactive()
-
-    st.subheader("Job Profit Visualization")
-    st.altair_chart(chart, use_container_width=True)
-
-    # Visualization for selected job sequences
-    selected_jobs = df[df['jobID'].isin(sequence)]
-    selected_chart = alt.Chart(selected_jobs).mark_bar().encode(
-        x='jobID',
-        y='profit',
-        color='deadline:N',
-        tooltip=['jobID', 'deadline', 'profit']
-    ).properties(
-        title="Selected Job Sequences",
-        width=600,
-        height=400
-    ).interactive()
-
-    st.subheader("Selected Job Sequences Visualization")
-    st.altair_chart(selected_chart, use_container_width=True)
-
 if __name__ == "__main__":
     main()
