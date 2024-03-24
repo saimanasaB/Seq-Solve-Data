@@ -49,18 +49,6 @@ def main():
     st.subheader("Sample Data")
     st.write(df)
 
-    # Visualize deadlines using Altair
-    st.subheader("Job Deadlines Visualization")
-    chart = alt.Chart(df).mark_bar().encode(
-        x='jobID:N',
-        y='deadline:Q',
-        tooltip=['jobID', 'deadline']
-    ).properties(
-        width=600,
-        height=400
-    )
-    st.altair_chart(chart, use_container_width=True)
-
     # Perform job sequencing
     sequence, total_profit = job_sequencing(df)
 
@@ -69,6 +57,32 @@ def main():
     st.write(sequence)
     st.subheader("Total Profit")
     st.write(total_profit)
+
+    # Visualization - Bar Plot for deadlines associated with Job IDs
+    st.subheader("Deadlines associated with Job IDs")
+    chart_deadlines = alt.Chart(df).mark_bar().encode(
+        x='jobID',
+        y='deadline',
+        tooltip=['jobID', 'deadline']
+    ).properties(
+        width=600,
+        height=400,
+        title='Deadlines associated with Job IDs'
+    ).interactive()
+    st.altair_chart(chart_deadlines)
+
+    # Visualization - Bar Plot for profits associated with Job IDs
+    st.subheader("Profits associated with Job IDs")
+    chart_profits = alt.Chart(df).mark_bar().encode(
+        x='jobID',
+        y='profit',
+        tooltip=['jobID', 'profit']
+    ).properties(
+        width=600,
+        height=400,
+        title='Profits associated with Job IDs'
+    ).interactive()
+    st.altair_chart(chart_profits)
     
 if __name__ == "__main__":
     main()
